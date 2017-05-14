@@ -1,29 +1,33 @@
-//Dependencies & requiring routes to enable server access
+//Dependencies & requires routes to enable server access
 var express = require("express"),
-	exphbs = require("express-handlebars"),
-	methodOver = require("method-override"),
-	bodyParser = require("body-parser"),
-	routes = require("./controllers/burgers_controller.js");
+    bodyParser = require("body-parser"),
+    db = require("./models");
 
-var PORT = process.env.PORT ||  3000;
-
+//Sets up Express App
+var PORT = process.env.PORT || 3000;
 var app = express();
 
-// Serve static content for the app from the 
-// "public" directory in the application directory.
-app.use(express.static(__dirname + "/public"));
+//Static directory
+app.use(express.static("./public"));
 
-app.use(bodyParser.urlencoded({ extended: false}));
+//Sets up data parsing capability for Express App
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+app.use(bodyParser.text());
+app.use(bodyParser.json({
+    type: "application/vnd.api+json"
+}));
 
-// Override with POST having ?_method=DELETE
-app.use(methodOver("_method"));
+//Routes
+require("./routes/api-routes.js")(app);
+require("./routes/html-routes.js")(app);
 
-//Setting handlebars
-app.engine("handlebars", exphbs({defaultLayout: "main"}));
-app.set("view engine", "handlebars");
-
-//Give server acess to routes
-app.use("/", routes);
-
-//Listening to port
-app.listen(PORT);
+db.sequelize.sync({
+    force: true
+}).then(function() {
+    app.listen(PORT, function() {
+        console.log("Listening on Port: " + PORT);
+    });
+});
