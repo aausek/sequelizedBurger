@@ -3,18 +3,28 @@ var db = require("../models");
 
 module.exports = function(app) {
 
-    app.get("/api/burgers", function(req, res) {
+    app.get("/", function(req, res) {
         db.seqBurger.findAll({}).then(function(dbseqBurger) {
-            res.render("view");
+            res.redirect("/burgers");
         });
     });
 
-    app.post("/api/burgers/create", function(req, res) {
+    app.get("/api/burgers", function(req, res) {
+        db.seqBurger.findAll({}).then(function(dbseqBurger) {
+            res.json(dbseqBurger);
+        });
+    });
+
+    app.post("/burgers/create", function(req, res) {
         db.seqBurger.create({
-            burger_name: req.body.burger_name,
-            devoured: req.body.devoured
+            burger_name: req.body.burger_name
         }).then(function(dbseqBurger) {
             res.redirect("/burgers");
+        }).catch(function(error) {
+            return res.render("error", {
+                message: error.message,
+                error: error
+            });
         });
     });
 
@@ -24,9 +34,9 @@ module.exports = function(app) {
             burger_name: req.body.burger_name
         }, {
             where: {
-                id: req.body.id
+                id: req.params.id
             }
-        }).then(function(data) {
+        }).then(function(dbseqBurger) {
             res.redirect("/burgers");
         });
     });
