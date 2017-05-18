@@ -4,40 +4,37 @@ var db = require("../models");
 module.exports = function(app) {
 
     app.get("/", function(req, res) {
+        res.redirect("/index");
+    });
+
+    app.get("/index", function(req, res) {
         db.seqBurger.findAll({}).then(function(dbseqBurger) {
-            res.redirect("/burgers");
+            var hbsObj = {
+                burger_data: dbseqBurger
+            };
+            res.render("index", hbsObj);
         });
     });
 
-    app.get("/api/burgers", function(req, res) {
-        db.seqBurger.findAll({}).then(function(dbseqBurger) {
-            res.json(dbseqBurger);
-        });
-    });
-
-    app.post("/burgers/create", function(req, res) {
+    app.post("/index", function(req, res) {
         db.seqBurger.create({
             burger_name: req.body.burger_name
         }).then(function(dbseqBurger) {
-            res.redirect("/burgers");
+            res.redirect("/index");
         }).catch(function(error) {
-            return res.render("error", {
-                message: error.message,
-                error: error
-            });
+            res.json(error);
         });
     });
 
-    app.put("/burgers/update/:id", function(req, res) {
+    app.put("/:id", function(req, res) {
         db.seqBurger.update({
-            devoured: req.body.devoured,
-            burger_name: req.body.burger_name
+            devoured: req.body.devoured
         }, {
             where: {
                 id: req.params.id
             }
-        }).then(function(dbseqBurger) {
-            res.redirect("/burgers");
+        }).then(function(results) {
+            res.redirect("/index");
         });
     });
 };

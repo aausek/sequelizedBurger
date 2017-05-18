@@ -15,7 +15,7 @@
         {{#unless this.devoured}}
         <div class = "well">
             
-            <form action="/burgers/update/{{this.id}}?_method=PUT" method="POST">
+            <form action="/{{this.id}}?_method=PUT" method="POST">
               <input type="hidden" name="devoured" value="true">
               <br />
               <span>{{this.id}}. {{this.burger_name}}<button type="submit" class="btn btn-primary" style = "margin-left: 20px;">Eat it!</button></span>
@@ -34,7 +34,7 @@
       <h3 class="panel-title" style="text-align: center">Add a Burger</h3>
     </div>
     <div class="panel-body">
-      <form class="create-update-form" action="/burgers/create" method="POST">
+      <form class="create-update-form" action="/index" method="POST">
         <div class="form-group">
           <label for="newBurger">Burger Name:</label>
           <input type="hidden" name="devoured" value="0">
@@ -57,7 +57,7 @@
       {{#each burger_data}}
         {{#if this.devoured}}
           <p># {{this.burger_name}}</p>
-            <form action="burgers/update/{{this.id}}?_method=PUT" method="POST">
+            <form action="/:{{this.id}}?_method=PUT" method="POST">
               <input type="hidden" name="devoured" value="false">
             </form>
         {{/if}}
